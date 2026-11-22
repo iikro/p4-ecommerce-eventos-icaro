@@ -7,7 +7,7 @@ import { ProductFactory } from '../domain/ProductFactory';
 import { IProductRepository } from '../repositories/IProductRepository';
 import { IOrderRepository } from '../repositories/IOrderRepository';
 import { PaymentMethodRegistry } from '../payments/PaymentMethodRegistry';
-import { NotificationService } from './NotificationService';
+import { IOrderQueue } from '../queues/IOrderQueue';
 
 @injectable()
 export class OrderService {
@@ -15,7 +15,7 @@ export class OrderService {
     @inject(TYPES.ProductRepository) private products: IProductRepository,
     @inject(TYPES.OrderRepository) private orders: IOrderRepository,
     @inject(PaymentMethodRegistry) private payments: PaymentMethodRegistry,
-    @inject(NotificationService) private notification: NotificationService,
+    @inject(TYPES.OrderQueue) private orderQueue: IOrderQueue,
   ) {}
 
   async placeOrder(customer: string, items: OrderItem[], paymentMethod: string, paymentDetails: any) {
@@ -41,10 +41,9 @@ export class OrderService {
 
     const order = await this.orders.create(customer, lines, total);
 
-    const emailPreview = await this.notification.orderConfirmed(order);
-    logger.info(`Email enviado: ${emailPreview}`);
+    await this.orderQueue.publish(order);
 
-    return { orderId: order.id, total, emailPreview };
+    return { orderId: order.id, total };
   }
 
   async getOrder(id: number) {

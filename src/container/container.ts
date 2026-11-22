@@ -14,6 +14,8 @@ import { CreditCardPayment } from '../payments/CreditCardPayment';
 import { DebitCardPayment } from '../payments/DebitCardPayment';
 import { PixPayment } from '../payments/PixPayment';
 import { PaymentMethodRegistry } from '../payments/PaymentMethodRegistry';
+import { IOrderQueue } from '../queues/IOrderQueue';
+import { RedisOrderQueue } from '../queues/RedisOrderQueue';
 import { NotificationService } from '../services/NotificationService';
 import { OrderService } from '../services/OrderService';
 import { OrderController } from '../controllers/OrderController';
@@ -37,6 +39,8 @@ container.bind<IPaymentMethod>(TYPES.PaymentMethod).to(CreditCardPayment);
 container.bind<IPaymentMethod>(TYPES.PaymentMethod).to(DebitCardPayment);
 container.bind<IPaymentMethod>(TYPES.PaymentMethod).to(PixPayment);
 container.bind(PaymentMethodRegistry).toSelf().inSingletonScope();
+
+container.bind<IOrderQueue>(TYPES.OrderQueue).to(RedisOrderQueue).inSingletonScope();
 
 container.bind(NotificationService).toSelf();
 container.bind(OrderService).toSelf();

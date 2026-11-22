@@ -4,4 +4,5 @@ export const TYPES = {
   OrderRepository: Symbol.for('OrderRepository'),
   MailProvider: Symbol.for('MailProvider'),
   PaymentMethod: Symbol.for('PaymentMethod'),
+  OrderQueue: Symbol.for('OrderQueue'),
 };
